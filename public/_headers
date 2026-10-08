@@ -1,0 +1,32 @@
+# Source of the site's Content-Security-Policy. The build copies the policy below into a
+# <meta http-equiv> tag in every page (minus header-only directives such as frame-ancestors).
+#
+# connect-src 'self' plus default-src 'self' is the key privacy guarantee: the page can only talk
+# to its own origin (static files), never to a third-party server. A stricter connect-src 'none'
+# also works, but it stops Lighthouse from reading robots.txt, which lowers its SEO score.
+# - worker-src blob: lets pdf.js and the merge worker start.
+# - img-src blob: data: shows the generated thumbnails.
+# - The service worker (/sw.js) is deliberately excluded: it must be able to fetch to
+#   fill its offline cache, and it never handles file contents.
+
+/
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+/404.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+/*/
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+/assets/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'
+  Cache-Control: public, max-age=31536000, immutable
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+/sw.js
+  Cache-Control: no-cache
+  Content-Security-Policy: default-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'

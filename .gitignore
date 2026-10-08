@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build output (including any extra builds made with --outDir)
+dist/
+dist-*/
+
+# Caches and tool output
+.vite/
+.cache/
+.temp/
+.eslintcache
+.prettiercache
+*.tsbuildinfo
+coverage/
+.vitest/
+test-results/
+playwright-report/
+
+# Environment and secrets (never commit these)
+.env
+.env.*
+!.env.example
+
+# Local-only files (Vite convention: anything named *.local)
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors and IDEs (personal settings; the shared .editorconfig stays tracked)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Operating system files
+.DS_Store
+.AppleDouble
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

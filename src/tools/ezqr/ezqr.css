@@ -1,0 +1,127 @@
+/* EzQR page styles. */
+
+/* ------------------------------------------------------------------ layout */
+.qr-layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+@media (min-width: 880px) {
+  .qr-layout {
+    grid-template-columns: 1fr minmax(0, 24rem);
+  }
+
+  .qr-output {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+  }
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.qr-row {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.qr-row--colors {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.qr-text {
+  min-height: 7.5rem;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.field__hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.color-input {
+  width: 100%;
+  height: 52px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.color-input:hover {
+  border-color: var(--text-muted);
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-input::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius) - 6px);
+}
+
+.color-input::-moz-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius) - 6px);
+}
+
+/* ----------------------------------------------------------------- preview */
+.qr-preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+}
+
+.qr-preview__svg {
+  width: 100%;
+  height: 100%;
+}
+
+.qr-preview.is-empty {
+  align-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  color: var(--text-muted);
+  text-align: center;
+  border-style: dashed;
+}
+
+.qr-preview__icon {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.6;
+}
+
+.qr-actions {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.qr-preview__caption {
+  position: absolute;
+  inset-inline: var(--space-3);
+  bottom: var(--space-3);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.85rem;
+  text-align: center;
+}

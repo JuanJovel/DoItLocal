@@ -1,0 +1,66 @@
+/*
+ * Design tokens. DoItLocal is dark-only: one calm green palette
+ */
+:root {
+  color-scheme: dark;
+
+  /* ---- brand palette ---- */
+  --celadon: #a1cca5;
+  --muted-teal: #8fb996;
+  --muted-teal-2: #709775;
+  --hunter-green: #415d43;
+  --carbon-black: #111d13;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif;
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --header-h: 64px;
+
+  /* ---- surfaces ---- */
+  --bg: color-mix(in srgb, var(--carbon-black) 40%, black);
+  --bg-subtle: color-mix(in srgb, var(--hunter-green) 22%, var(--carbon-black));
+  --surface: color-mix(in srgb, var(--hunter-green) 30%, var(--carbon-black));
+  --surface-raised: color-mix(in srgb, var(--hunter-green) 40%, var(--carbon-black));
+  --border: color-mix(in srgb, var(--hunter-green) 70%, var(--carbon-black));
+  --border-strong: var(--hunter-green);
+  --overlay: color-mix(in srgb, var(--bg) 88%, transparent);
+
+  /* ---- text ---- */
+  --text: #e9f3ea;
+  --text-muted: var(--muted-teal);
+
+  /* ---- accent (celadon): buttons fill with it, text on it is carbon black ---- */
+  --accent: var(--celadon);
+  --accent-hover: var(--muted-teal);
+  --accent-contrast: var(--carbon-black);
+  --accent-text: var(--celadon);
+  --accent-soft: color-mix(in srgb, var(--hunter-green) 55%, var(--carbon-black));
+  --focus: var(--celadon);
+
+  /* ---- status ---- */
+  --success: var(--celadon);
+  --success-soft: color-mix(in srgb, var(--hunter-green) 45%, var(--carbon-black));
+  --success-border: var(--muted-teal-2);
+  --danger: #ffa59c;
+  --danger-soft: #2d1718;
+  --danger-border: #6b2b2e;
+
+  /* ---- elevation ---- */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 24px 48px -12px rgb(0 0 0 / 0.7);
+}
