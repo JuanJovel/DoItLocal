@@ -1,5 +1,8 @@
 # DoItLocal Toolkit
 
+[![Deploy](https://github.com/JuanJovel/DoItLocal/actions/workflows/deploy.yml/badge.svg)](https://github.com/JuanJovel/DoItLocal/actions/workflows/deploy.yml)
+[![Open the site](https://img.shields.io/badge/Open_the_site-juanjovel.github.io%2FDoItLocal-a1cca5?style=for-the-badge)](https://juanjovel.github.io/DoItLocal/)
+
 Small, free web tools that run entirely in your browser. No uploads, no accounts, no tracking.
 
 ## Tools
