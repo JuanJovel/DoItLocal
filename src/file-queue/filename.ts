@@ -1,5 +1,3 @@
-export const DEFAULT_OUTPUT_NAME = 'merged.pdf';
-
 // Characters that are illegal in file names on Windows, macOS or Linux, plus control characters.
 // eslint-disable-next-line no-control-regex
 const ILLEGAL = /[\\/:*?"<>|\u0000-\u001f\u007f]/g;
@@ -8,9 +6,9 @@ const MAX_BASE_LENGTH = 120;
 
 /**
  * Turn whatever the user typed into a safe download file name that always ends in ".pdf".
- * Empty or unusable input falls back to "merged.pdf".
+ * Empty or unusable input gives `fallback`.
  */
-export function sanitizeOutputName(input: string, fallback = DEFAULT_OUTPUT_NAME): string {
+export function sanitizeOutputName(input: string, fallback: string): string {
   let base = input.replace(ILLEGAL, '').trim();
   base = base
     .replace(/(\.pdf)+$/i, '')

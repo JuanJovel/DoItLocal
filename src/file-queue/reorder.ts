@@ -1,4 +1,4 @@
-import { clamp } from '../../lib/clamp';
+import { clamp } from '../lib/clamp';
 
 /** Pure helpers for ordering and rotating the file queue. Nothing here touches the DOM. */
 
@@ -15,9 +15,14 @@ export function moveItem<T>(list: readonly T[], from: number, to: number): T[] {
   return next;
 }
 
+/** Combine two clockwise turns. */
+export function rotateBy(rotation: Rotation, turn: Rotation): Rotation {
+  return ((rotation + turn) % 360) as Rotation;
+}
+
 /** Rotate a quarter turn clockwise: 0 -> 90 -> 180 -> 270 -> 0. */
 export function rotateClockwise(rotation: Rotation): Rotation {
-  return ((rotation + 90) % 360) as Rotation;
+  return rotateBy(rotation, 90);
 }
 
 /**

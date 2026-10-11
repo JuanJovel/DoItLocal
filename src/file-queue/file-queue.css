@@ -1,4 +1,4 @@
-/* PDFold page styles. Loaded only with the PDFold chunk. */
+/* File-queue page styles. Loaded only with the code of the tools that use them. */
 
 /* ---------------------------------------------------------------- dropzone */
 .dropzone {
@@ -414,7 +414,27 @@
   }
 }
 
-.btn--merge {
+.actionbar__fields {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+
+.actionbar__fields > .field:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 900px) {
+  .actionbar__fields > .field:first-child {
+    grid-column: auto;
+  }
+}
+
+.actionbar__options {
+  display: contents;
+}
+
+.actionbar__button {
   min-width: 12rem;
 }
 

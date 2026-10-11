@@ -1,14 +1,22 @@
-import { createElement } from '../../lib/dom';
-import { formatBytes, plural } from '../../lib/format';
-import { icon, type IconName } from '../../lib/icons';
-import type { PdfItem } from './store';
+import { createElement } from '../lib/dom';
+import { formatBytes } from '../lib/format';
+import { icon, type IconName } from '../lib/icons';
+import type { QueueItem } from './store';
 
 export type CardAction = 'earlier' | 'later' | 'rotate' | 'remove';
 
 export interface Card {
   el: HTMLLIElement;
-  /** Sync the card with an item. `position` is 1-based among mergeable files, or null for files that will not be merged. */
-  update(item: PdfItem, position: number | null, readyCount: number): void;
+  /**
+   * Sync the card with an item. `position` is 1-based among the ready files (null for files
+   * that won't be used) and `detail` describes a ready file, e.g. "3 pages · 1.2 MB".
+   */
+  update(
+    item: QueueItem<unknown>,
+    position: number | null,
+    readyCount: number,
+    detail: string,
+  ): void;
 }
 
 function actionButton(
@@ -65,13 +73,18 @@ export function createCard(id: string): Card {
   let img: HTMLImageElement | null = null;
   let placeholder: 'file' | 'alert' | null = null;
 
-  function update(item: PdfItem, position: number | null, readyCount: number): void {
+  function update(
+    item: QueueItem<unknown>,
+    position: number | null,
+    readyCount: number,
+    detail: string,
+  ): void {
     const isError = item.status === 'error';
     el.classList.toggle('is-error', isError);
     el.classList.toggle('is-checking', item.status === 'checking');
     el.dataset['status'] = item.status;
 
-    // Position badge: only mergeable files are numbered.
+    // Position badge: only ready files are numbered.
     index.textContent = position === null ? '' : String(position);
     index.hidden = position === null;
 
@@ -118,7 +131,7 @@ export function createCard(id: string): Card {
     } else if (item.status === 'checking') {
       meta.textContent = `Reading… · ${formatBytes(item.size)}`;
     } else {
-      meta.textContent = `${plural(item.pageCount ?? 0, 'page')} · ${formatBytes(item.size)}`;
+      meta.textContent = detail;
     }
 
     // Controls. Disabled-looking edges use aria-disabled so keyboard focus is never lost.

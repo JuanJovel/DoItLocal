@@ -1,5 +1,9 @@
+import { commonProblems, readHead, type Inspection } from '../../file-queue/intake';
+import type { FileProblem } from '../../file-queue/store';
+import { inspectPdf } from './pdf-reader';
+
 /**
- * File validation and friendly error messages.
+ * PDF validation and friendly error messages.
  *
  * Messages deliberately omit the file name: the UI shows it next to the message
  * (and prefixes it for screen-reader announcements).
@@ -7,22 +11,29 @@
 
 export type ProblemCode = 'empty' | 'not-pdf' | 'corrupt' | 'password' | 'unreadable';
 
-export interface FileProblem {
-  code: ProblemCode;
-  message: string;
+export interface PdfInfo {
+  pageCount: number;
 }
 
 /** The PDF spec allows up to 1024 bytes of junk before the "%PDF-" header. */
 const HEADER_WINDOW = 1024;
 
-const MESSAGES = {
-  empty: 'This file is empty (0 bytes), so there is nothing to merge.',
-  corrupt: 'This file looks damaged or is not a valid PDF, so it can’t be read.',
-  password:
-    'This PDF is password-protected. Remove the password in the app that created it, then add it again.',
-  unreadable:
-    'This file couldn’t be read. It may have been moved, renamed or still be saving. Try adding it again.',
-} as const;
+const problems = {
+  ...commonProblems,
+  corrupt: {
+    code: 'corrupt',
+    message: 'This file looks damaged or is not a valid PDF, so it can’t be read.',
+  },
+  password: {
+    code: 'password',
+    message:
+      'This PDF is password-protected. Remove the password in the app that created it, then add it again.',
+  },
+} satisfies Record<Exclude<ProblemCode, 'not-pdf'>, FileProblem>;
+
+export function problemFor(code: Exclude<ProblemCode, 'not-pdf'>): FileProblem {
+  return problems[code];
+}
 
 /** Best-effort description of what a non-PDF file is, for a more specific message. */
 function describeNonPdf(name: string, type: string): string {
@@ -41,27 +52,19 @@ function describeNonPdf(name: string, type: string): string {
   return 'This doesn’t look like a PDF. PDFold only merges PDF files.';
 }
 
-function claimsToBePdf(file: File): boolean {
-  return file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
-}
-
 /**
  * Cheap first check that only reads the first KB of the file, so it stays instant
  * even for multi-hundred-megabyte PDFs. Returns null when the file looks like a PDF.
  */
 export async function checkPdfFile(file: File): Promise<FileProblem | null> {
-  if (file.size === 0) return { code: 'empty', message: MESSAGES.empty };
+  if (file.size === 0) return problems.empty;
 
-  let head: string;
-  try {
-    const bytes = new Uint8Array(await file.slice(0, HEADER_WINDOW).arrayBuffer());
-    head = String.fromCharCode(...bytes);
-  } catch {
-    return { code: 'unreadable', message: MESSAGES.unreadable };
-  }
+  const head = await readHead(file, HEADER_WINDOW);
+  if (!head) return problems.unreadable;
+  if (String.fromCharCode(...head).includes('%PDF-')) return null;
 
-  if (head.includes('%PDF-')) return null;
-  if (claimsToBePdf(file)) return { code: 'corrupt', message: MESSAGES.corrupt };
+  const claimsToBePdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  if (claimsToBePdf) return problems.corrupt;
   return { code: 'not-pdf', message: describeNonPdf(file.name, file.type) };
 }
 
@@ -71,11 +74,21 @@ export async function checkPdfFile(file: File): Promise<FileProblem | null> {
  */
 export function describeLoadError(error: unknown): FileProblem {
   const name = error instanceof Error ? error.name : '';
-  if (name === 'PasswordException') return { code: 'password', message: MESSAGES.password };
-  if (name === 'FileReadError') return { code: 'unreadable', message: MESSAGES.unreadable };
-  return { code: 'corrupt', message: MESSAGES.corrupt };
+  if (name === 'PasswordException') return problems.password;
+  if (name === 'FileReadError') return problems.unreadable;
+  return problems.corrupt;
 }
 
-export function problemFor(code: Exclude<ProblemCode, 'not-pdf'>): FileProblem {
-  return { code, message: MESSAGES[code] };
+/** The full check run on every added file: a quick header check, then opening it with pdf.js. */
+export async function inspectPdfFile(
+  file: File,
+  open: (file: File) => Promise<PdfInfo> = inspectPdf,
+): Promise<Inspection<PdfInfo>> {
+  const problem = await checkPdfFile(file);
+  if (problem) return { problem };
+  try {
+    return { info: await open(file) };
+  } catch (error) {
+    return { problem: describeLoadError(error) };
+  }
 }

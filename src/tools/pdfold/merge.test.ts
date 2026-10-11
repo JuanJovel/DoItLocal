@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { mergePdfs, type MergeProgress } from './merge';
-import { MergeError } from './merge-error';
+import { JobError, type JobProgress } from '../../file-queue/job';
+import { mergePdfs } from './merge';
 import {
   asInput,
   makeEncryptedLookingPdf,
@@ -96,7 +96,7 @@ describe('mergePdfs', () => {
 
   it('reports monotonic progress ending at 1', async () => {
     const bytes = await makeSamplePdf('A', 1);
-    const events: MergeProgress[] = [];
+    const events: JobProgress[] = [];
     await mergePdfs([asInput('1.pdf', bytes), asInput('2.pdf', bytes), asInput('3.pdf', bytes)], {
       onProgress: (p) => events.push(p),
     });
@@ -123,7 +123,7 @@ describe('mergePdfs', () => {
       (e: unknown) => e,
     );
 
-    expect(error).toBeInstanceOf(MergeError);
+    expect(error).toBeInstanceOf(JobError);
     expect(error).toMatchObject({ code: 'corrupt', failedFile: { index: 1, name: 'bad.pdf' } });
   });
 
