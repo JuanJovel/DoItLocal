@@ -18,7 +18,7 @@ export function renderNotFound(container: HTMLElement): void {
   container.replaceChildren(
     messagePage(
       'Page not found',
-      'That page doesn’t exist. Maybe the link is old.',
+      "That page doesn't exist. Maybe the link is old.",
       createElement(
         'a',
         { class: 'btn btn--primary', href: import.meta.env.BASE_URL },

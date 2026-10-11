@@ -22,7 +22,7 @@ const problems = {
   ...commonProblems,
   corrupt: {
     code: 'corrupt',
-    message: 'This file looks damaged or is not a valid PDF, so it can’t be read.',
+    message: "This file looks damaged or is not a valid PDF, so it can't be read.",
   },
   password: {
     code: 'password',
@@ -44,12 +44,12 @@ function describeNonPdf(name: string, type: string): string {
   )
     return 'This is an image, not a PDF. To turn images into a PDF, use PicFold.';
   if (['doc', 'docx', 'odt', 'rtf', 'ppt', 'pptx', 'odp', 'xls', 'xlsx', 'ods'].includes(ext))
-    return 'This is an office document, not a PDF. Export or “Save as PDF” first, then add it.';
+    return 'This is an office document, not a PDF. Export or "Save as PDF" first, then add it.';
   if (['zip', 'rar', '7z', 'gz', 'tar'].includes(ext))
     return 'This is an archive, not a PDF. Extract it first, then add the PDFs inside.';
   if (type.startsWith('text/') || ['txt', 'md', 'csv', 'html', 'htm'].includes(ext))
     return 'This is a text file, not a PDF. PDFold only merges PDF files.';
-  return 'This doesn’t look like a PDF. PDFold only merges PDF files.';
+  return "This doesn't look like a PDF. PDFold only merges PDF files.";
 }
 
 /**

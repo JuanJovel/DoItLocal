@@ -45,7 +45,7 @@ export function imagesToPdf(
       producer: 'PicFold (DoItLocal)',
       describeError: () => ({
         code: 'corrupt',
-        message: 'This image looks damaged or couldn’t be decoded, so it can’t be added.',
+        message: "This image looks damaged or couldn't be decoded, so it can't be added.",
       }),
       async add(doc, input) {
         const { format, bytes, upright } = await input.load();

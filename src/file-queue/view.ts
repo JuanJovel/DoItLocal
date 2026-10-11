@@ -482,7 +482,7 @@ export function mountFileQueue<Info>(
     // Flag just the offending file; the rest of the queue stays intact.
     queue.update(badId, { status: 'error', problem: { code, message } });
     showError(
-      `Couldn’t ${verb.base} “${failedFile.name}”: ${message} It has been marked in your list; remove it and try again.`,
+      `Couldn't ${verb.base} "${failedFile.name}": ${message} It has been marked in your list; remove it and try again.`,
     );
   }
 

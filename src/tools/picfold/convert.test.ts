@@ -42,7 +42,7 @@ describe('imagesToPdf', () => {
     ]);
   });
 
-  it('turns EXIF-rotated photos upright and adds the user’s rotation on top', async () => {
+  it("turns EXIF-rotated photos upright and adds the user's rotation on top", async () => {
     const sideways = withOrientation(makeImage('jpeg', 400, 200), 6);
     const result = await imagesToPdf(
       [

@@ -19,7 +19,7 @@ export interface QueueState {
 /** "3 files · 6 pages · 3.8 KB · 1 file can't be used · reading…" */
 export function queueSummary({ files, pages, bytes, problems, checking }: QueueState): string {
   const parts = [plural(files, 'file'), plural(pages, 'page'), formatBytes(bytes)];
-  if (problems) parts.push(`${plural(problems, 'file')} can’t be used`);
+  if (problems) parts.push(`${plural(problems, 'file')} can't be used`);
   if (checking) parts.push('reading…');
   return parts.join(' · ');
 }
@@ -43,7 +43,7 @@ export function actionHint(state: QueueState, { minFiles, noun, verb }: HintOpti
     return `Add at least ${count} ${what} to ${verb}.`;
   }
   if (state.bytes > LARGE_TOTAL_BYTES) {
-    return `That’s ${formatBytes(state.bytes)} in total. If your browser runs out of memory, work in smaller batches.`;
+    return `That's ${formatBytes(state.bytes)} in total. If your browser runs out of memory, work in smaller batches.`;
   }
   return `Ready: ${plural(state.files, noun)} into one PDF of ${plural(state.pages, 'page')}.`;
 }

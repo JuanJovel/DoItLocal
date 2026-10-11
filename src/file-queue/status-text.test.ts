@@ -12,7 +12,7 @@ describe('queueSummary', () => {
 
   it('mentions problem files and ongoing reads', () => {
     expect(queueSummary({ ...base, files: 1, pages: 1, problems: 2, checking: true })).toBe(
-      '1 file · 1 page · 2 KB · 2 files can’t be used · reading…',
+      "1 file · 1 page · 2 KB · 2 files can't be used · reading…",
     );
   });
 });

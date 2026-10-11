@@ -65,7 +65,7 @@ export const commonProblems = {
   unreadable: {
     code: 'unreadable',
     message:
-      'This file couldn’t be read. It may have been moved, renamed or still be saving. Try adding it again.',
+      "This file couldn't be read. It may have been moved, renamed or still be saving. Try adding it again.",
   },
 } satisfies Record<string, FileProblem>;
 

@@ -34,7 +34,7 @@ function notAnImage(head: Uint8Array): FileProblem {
     code: 'not-image',
     message: isPdf
       ? 'This is a PDF, not an image. To combine PDFs, use PDFold.'
-      : 'This doesn’t look like an image. PicFold accepts JPEG, PNG, GIF, WebP, BMP, HEIC and AVIF.',
+      : "This doesn't look like an image. PicFold accepts JPEG, PNG, GIF, WebP, BMP, HEIC and AVIF.",
   };
 }
 
@@ -43,7 +43,7 @@ function unsupported(kind: ImageKind): FileProblem {
     code: 'unsupported',
     message:
       kind === 'heic'
-        ? 'This browser can’t open HEIC photos. Try Safari, or set your iPhone camera to “Most Compatible” so it saves JPEGs.'
-        : `This browser can’t open ${KIND_LABELS[kind]} images. Convert it to JPEG or PNG first.`,
+        ? 'This browser can\'t open HEIC photos. Try Safari, or set your iPhone camera to "Most Compatible" so it saves JPEGs.'
+        : `This browser can't open ${KIND_LABELS[kind]} images. Convert it to JPEG or PNG first.`,
   };
 }
