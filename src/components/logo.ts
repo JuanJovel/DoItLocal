@@ -31,6 +31,17 @@ export function pdfoldLogo(size = 32): SVGSVGElement {
   );
 }
 
+export function picfoldLogo(size = 32): SVGSVGElement {
+  return logo(
+    size,
+    9,
+    `<rect x="7" y="6.5" width="13" height="15" rx="2" fill="var(--accent-contrast)" opacity=".5"/>` +
+      `<rect x="11" y="10.5" width="14" height="15" rx="2" fill="var(--accent-contrast)"/>` +
+      `<circle cx="15.2" cy="14.8" r="1.6" fill="var(--accent)"/>` +
+      `<path d="m12.8 23.2 4.3-4.4 2.7 2.7 1.9-1.9 2.4 3.6" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`,
+  );
+}
+
 export function ezqrLogo(size = 32): SVGSVGElement {
   return logo(
     size,

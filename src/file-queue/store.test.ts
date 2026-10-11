@@ -1,20 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
-import { PdfStore } from './store';
+import { FileQueue } from './store';
+
+type Info = { pages: number };
 
 const pdf = (name: string, size = 10): File => new File([new Uint8Array(size)], name);
 
-function storeWith(...names: string[]): PdfStore {
-  const store = new PdfStore();
+function storeWith(...names: string[]): FileQueue<Info> {
+  const store = new FileQueue<Info>();
   const items = store.add(names.map((n) => pdf(n)));
-  items.forEach((item) => store.update(item.id, { status: 'ready', pageCount: 2 }));
+  items.forEach((item) => store.update(item.id, { status: 'ready', info: { pages: 2 } }));
   return store;
 }
 
-const names = (store: PdfStore): string[] => store.items.map((i) => i.name);
+const names = (store: FileQueue<Info>): string[] => store.items.map((i) => i.name);
 
-describe('PdfStore', () => {
+describe('FileQueue', () => {
   it('adds files in order with the checking state', () => {
-    const store = new PdfStore();
+    const store = new FileQueue<Info>();
     const added = store.add([pdf('a.pdf'), pdf('b.pdf')]);
     expect(added.map((i) => i.status)).toEqual(['checking', 'checking']);
     expect(new Set(added.map((i) => i.id)).size).toBe(2);
@@ -22,7 +24,7 @@ describe('PdfStore', () => {
   });
 
   it('notifies subscribers and supports unsubscribe', () => {
-    const store = new PdfStore();
+    const store = new FileQueue<Info>();
     const listener = vi.fn();
     const off = store.subscribe(listener);
     store.add([pdf('a.pdf')]);
@@ -33,7 +35,7 @@ describe('PdfStore', () => {
   });
 
   it('does not notify for an empty add or an update of a removed item', () => {
-    const store = new PdfStore();
+    const store = new FileQueue<Info>();
     const listener = vi.fn();
     store.subscribe(listener);
     store.add([]);
@@ -106,14 +108,5 @@ describe('PdfStore', () => {
       90, 180, 270, 0,
     ]);
     expect(store.rotate('missing')).toBeUndefined();
-  });
-
-  it('computes totals over mergeable files only', () => {
-    const store = new PdfStore();
-    const [a, b, c] = store.add([pdf('a.pdf', 100), pdf('b.pdf', 200), pdf('c.pdf', 400)]);
-    store.update(a!.id, { status: 'ready', pageCount: 3 });
-    store.update(b!.id, { status: 'ready', pageCount: 5 });
-    store.update(c!.id, { status: 'error' });
-    expect(store.totals).toEqual({ files: 2, pages: 8, bytes: 300 });
   });
 });

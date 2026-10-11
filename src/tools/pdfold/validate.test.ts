@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkPdfFile, describeLoadError } from './validate';
+import { checkPdfFile, describeLoadError, inspectPdfFile } from './validate';
 import { makeSamplePdf } from './test-helpers';
 
 function fileOf(content: string | Uint8Array, name: string, type = ''): File {
@@ -90,5 +90,36 @@ describe('describeLoadError', () => {
   it('treats anything unknown as a damaged file', () => {
     expect(describeLoadError('boom').code).toBe('corrupt');
     expect(describeLoadError(undefined).code).toBe('corrupt');
+  });
+});
+
+describe('inspectPdfFile', () => {
+  const named = (name: string): Error => Object.assign(new Error(name), { name });
+
+  it('returns the page count of a good PDF', async () => {
+    const bytes = await makeSamplePdf('A', 1);
+    const result = await inspectPdfFile(fileOf(bytes, 'a.pdf'), async () => ({ pageCount: 7 }));
+    expect(result).toEqual({ info: { pageCount: 7 } });
+  });
+
+  it('explains each kind of bad file', async () => {
+    const good = await makeSamplePdf('G', 1);
+    const open = async (file: File) => {
+      if (file.name === 'locked.pdf') throw named('PasswordException');
+      if (file.name === 'broken.pdf') throw named('InvalidPDFException');
+      return { pageCount: 1 };
+    };
+    const codes = await Promise.all(
+      [
+        fileOf('hello', 'picture.png', 'image/png'),
+        fileOf(good, 'locked.pdf'),
+        fileOf(good, 'broken.pdf'),
+        fileOf('', 'empty.pdf'),
+      ].map(async (file) => {
+        const result = await inspectPdfFile(file, open);
+        return 'problem' in result ? result.problem.code : 'ok';
+      }),
+    );
+    expect(codes).toEqual(['not-pdf', 'password', 'corrupt', 'empty']);
   });
 });

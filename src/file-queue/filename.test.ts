@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_OUTPUT_NAME, sanitizeOutputName } from './filename';
+import { sanitizeOutputName as sanitize } from './filename';
+
+const DEFAULT_OUTPUT_NAME = 'merged.pdf';
+const sanitizeOutputName = (input: string, fallback = DEFAULT_OUTPUT_NAME): string =>
+  sanitize(input, fallback);
 
 describe('sanitizeOutputName', () => {
   it('keeps a normal name and ensures a single .pdf extension', () => {

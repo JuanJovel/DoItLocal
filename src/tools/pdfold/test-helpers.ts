@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts, degrees } from 'pdf-lib';
 import type { MergeInput } from './merge';
-import type { Rotation } from './reorder';
+import type { Rotation } from '../../file-queue/reorder';
 
 /** Test utilities: generate real PDFs whose pages can be identified after a merge. */
 
