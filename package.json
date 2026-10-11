@@ -1,7 +1,7 @@
 {
   "name": "doitlocal-toolkit",
   "version": "1.0.0",
-  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser. First tool: PDFold, a PDF merger.",
+  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser: PDFold, PicFold and EzQR.",
   "private": true,
   "type": "module",
   "license": "MIT",

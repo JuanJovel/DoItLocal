@@ -6,7 +6,7 @@ Development-only tools (Vite, TypeScript, Vitest, ESLint, Prettier and so on) ar
 
 | Component | Version | License | Used for |
 | --- | --- | --- | --- |
-| [pdf-lib](https://github.com/Hopding/pdf-lib) | 1.17.1 | MIT | Merging PDFs (bundles @pdf-lib/standard-fonts, @pdf-lib/upng and pako) |
+| [pdf-lib](https://github.com/Hopding/pdf-lib) | 1.17.1 | MIT | Merging PDFs and building PDFs from images (bundles @pdf-lib/standard-fonts, @pdf-lib/upng and pako) |
 | [PDF.js](https://github.com/mozilla/pdf.js) (pdfjs-dist) | 6.3.289 | Apache-2.0 | Page counts and thumbnails |
 | [SortableJS](https://github.com/SortableJS/Sortable) | 1.15.7 | MIT | Drag-and-drop reordering |
 | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) | 2.0.4 | MIT | Encoding QR codes (EzQR) |
