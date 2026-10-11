@@ -42,7 +42,7 @@ function describeNonPdf(name: string, type: string): string {
     type.startsWith('image/') ||
     ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'bmp', 'svg', 'tif', 'tiff'].includes(ext)
   )
-    return 'This is an image, not a PDF. PDFold only merges PDF files.';
+    return 'This is an image, not a PDF. To turn images into a PDF, use PicFold.';
   if (['doc', 'docx', 'odt', 'rtf', 'ppt', 'pptx', 'odp', 'xls', 'xlsx', 'ods'].includes(ext))
     return 'This is an office document, not a PDF. Export or “Save as PDF” first, then add it.';
   if (['zip', 'rar', '7z', 'gz', 'tar'].includes(ext))

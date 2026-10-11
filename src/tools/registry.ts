@@ -1,12 +1,13 @@
 import { ezqr } from './ezqr';
 import { pdfold } from './pdfold';
+import { picfold } from './picfold';
 import type { ToolDefinition } from './types';
 
 /**
  * Every tool on the site. To add one: create `src/tools/<name>/`, export a
  * `ToolDefinition` from its `index.ts`, and add it to this list.
  */
-export const tools: readonly ToolDefinition[] = [pdfold, ezqr];
+export const tools: readonly ToolDefinition[] = [pdfold, picfold, ezqr];
 
 /** Tools that have a working page. */
 export function liveTools(list: readonly ToolDefinition[] = tools): ToolDefinition[] {
