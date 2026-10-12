@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { JobError, type JobProgress } from '../../file-queue/job';
-import { mergePdfs } from './merge';
+import type { Rotation } from '../../file-queue/reorder';
 import {
-  asInput,
   makeEncryptedLookingPdf,
   makeSamplePdf,
   readPages,
   readPageTexts,
-} from './test-helpers';
+} from '../../pdf/test-helpers';
+import { mergePdfs, type MergeInput } from './merge';
+
+function asInput(name: string, bytes: Uint8Array, rotation: Rotation = 0): MergeInput {
+  return { name, rotation, read: async () => bytes };
+}
 
 describe('mergePdfs', () => {
   it('merges several PDFs with the right page count and order', async () => {

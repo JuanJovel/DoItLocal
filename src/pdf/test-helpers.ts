@@ -1,6 +1,5 @@
 import { PDFDocument, StandardFonts, degrees } from 'pdf-lib';
-import type { MergeInput } from './merge';
-import type { Rotation } from '../../file-queue/reorder';
+import type { Rotation } from '../file-queue/reorder';
 
 /** Test utilities: generate real PDFs whose pages can be identified after a merge. */
 
@@ -28,10 +27,6 @@ export async function makeSamplePdf(
     if (pageRotation) page.setRotation(degrees(pageRotation));
   }
   return doc.save();
-}
-
-export function asInput(name: string, bytes: Uint8Array, rotation: Rotation = 0): MergeInput {
-  return { name, rotation, read: async () => bytes };
 }
 
 /** A PDF that pdf-lib refuses to load because its trailer declares encryption. */

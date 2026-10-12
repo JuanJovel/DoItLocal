@@ -6,8 +6,8 @@ import { formatBytes, plural } from '../../lib/format';
 import type { ToolContext, Unmount } from '../types';
 import { pdfold } from './index';
 import type { MergeFile } from './merge';
-import { preloadPdfjs, renderThumbnail } from './pdf-reader';
-import { inspectPdfFile, type PdfInfo } from './validate';
+import { preloadPdfjs, renderThumbnail } from '../../pdf/reader';
+import { inspectPdfFile, type PdfInfo } from '../../pdf/validate';
 
 export function mount({ container }: ToolContext): Unmount {
   return mountFileQueue<PdfInfo>(container, {

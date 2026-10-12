@@ -2,7 +2,7 @@ import { PDFDocument, degrees } from 'pdf-lib';
 import { buildPdf, type BuildOptions, type BuildResult } from '../../file-queue/pdf-build';
 import type { Rotation } from '../../file-queue/reorder';
 import type { FileProblem } from '../../file-queue/store';
-import { problemFor } from './validate';
+import { problemFor } from '../../pdf/validate';
 
 export interface MergeInput {
   /** Display name, used in progress and error messages. */
