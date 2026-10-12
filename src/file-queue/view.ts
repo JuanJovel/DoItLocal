@@ -11,7 +11,7 @@ import { runWhenIdle } from '../lib/prefetch';
 import type { Unmount } from '../tools/types';
 import { enableDropAnywhere } from './drop-anywhere';
 import { createCard, type Card, type CardAction } from './file-card';
-import { sanitizeOutputName } from './filename';
+import { extensionFor, sanitizeOutputName } from './filename';
 import { createIntake, describeIntake, type Inspection } from './intake';
 import { JobError, type Job, type JobProgress } from './job';
 import { actionHint, queueSummary } from './status-text';
@@ -408,8 +408,7 @@ export function mountFileQueue<Info>(
 
   async function run(): Promise<void> {
     if (isBusy() || actionBtn.disabled) return;
-    const fileName = sanitizeOutputName(nameInput.value, config.defaultFileName);
-    nameInput.value = fileName;
+    nameInput.value = sanitizeOutputName(nameInput.value, config.defaultFileName);
 
     const inputs = queue.ready;
     const snapshot = signature();
@@ -422,7 +421,12 @@ export function mountFileQueue<Info>(
 
     try {
       const result = await job.result;
-      const blob = new Blob([result.bytes as BlobPart], { type: 'application/pdf' });
+      const blob = new Blob([result.bytes as BlobPart], { type: result.type });
+      const fileName = sanitizeOutputName(
+        nameInput.value,
+        config.defaultFileName,
+        extensionFor(result.type),
+      );
       const url = URL.createObjectURL(blob);
       const details = `${plural(result.pageCount, 'page')} · ${formatBytes(blob.size)}`;
       outcome = { url, signature: snapshot };

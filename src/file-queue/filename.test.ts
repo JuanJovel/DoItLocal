@@ -1,53 +1,59 @@
 import { describe, expect, it } from 'vitest';
-import { sanitizeOutputName as sanitize } from './filename';
+import { extensionFor, sanitizeOutputName } from './filename';
 
-const DEFAULT_OUTPUT_NAME = 'merged.pdf';
-const sanitizeOutputName = (input: string, fallback = DEFAULT_OUTPUT_NAME): string =>
-  sanitize(input, fallback);
+const name = (input: string): string => sanitizeOutputName(input, 'merged.pdf');
 
 describe('sanitizeOutputName', () => {
-  it('keeps a normal name and ensures a single .pdf extension', () => {
-    expect(sanitizeOutputName('report')).toBe('report.pdf');
-    expect(sanitizeOutputName('report.pdf')).toBe('report.pdf');
-    expect(sanitizeOutputName('report.PDF')).toBe('report.pdf');
-    expect(sanitizeOutputName('report.pdf.pdf')).toBe('report.pdf');
+  it('keeps a normal name and ensures a single extension', () => {
+    expect(name('report')).toBe('report.pdf');
+    expect(name('report.pdf')).toBe('report.pdf');
+    expect(name('report.PDF')).toBe('report.pdf');
+    expect(name('report.pdf.pdf')).toBe('report.pdf');
+  });
+
+  it('replaces a typed output extension with the one the download needs', () => {
+    expect(sanitizeOutputName('pages.zip', 'pages.zip', 'jpg')).toBe('pages.jpg');
+    expect(sanitizeOutputName('scan.jpeg', 'pages.zip')).toBe('scan.zip');
+    expect(name('v1.2 notes')).toBe('v1.2 notes.pdf');
   });
 
   it('falls back to the default for empty or unusable input', () => {
-    expect(sanitizeOutputName('')).toBe(DEFAULT_OUTPUT_NAME);
-    expect(sanitizeOutputName('   ')).toBe(DEFAULT_OUTPUT_NAME);
-    expect(sanitizeOutputName('.pdf')).toBe(DEFAULT_OUTPUT_NAME);
-    expect(sanitizeOutputName('...')).toBe(DEFAULT_OUTPUT_NAME);
-    expect(sanitizeOutputName('///')).toBe(DEFAULT_OUTPUT_NAME);
+    for (const input of ['', '   ', '.pdf', '...', '///']) expect(name(input)).toBe('merged.pdf');
+    expect(sanitizeOutputName('', 'pages.zip', 'png')).toBe('pages.png');
   });
 
   it('removes characters that are illegal in file names', () => {
-    expect(sanitizeOutputName('a/b\\c:d*e?f"g<h>i|j')).toBe('abcdefghij.pdf');
-    expect(sanitizeOutputName('line\nbreak\u0000')).toBe('linebreak.pdf');
+    expect(name('a/b\\c:d*e?f"g<h>i|j')).toBe('abcdefghij.pdf');
+    expect(name('line\nbreak\u0000')).toBe('linebreak.pdf');
   });
 
   it('trims spaces and trailing dots', () => {
-    expect(sanitizeOutputName('  my file.  ')).toBe('my file.pdf');
-    expect(sanitizeOutputName('.hidden')).toBe('hidden.pdf');
+    expect(name('  my file.  ')).toBe('my file.pdf');
+    expect(name('.hidden')).toBe('hidden.pdf');
   });
 
   it('avoids reserved Windows device names', () => {
-    expect(sanitizeOutputName('con')).toBe('con_.pdf');
-    expect(sanitizeOutputName('NUL.pdf')).toBe('NUL_.pdf');
-    expect(sanitizeOutputName('console')).toBe('console.pdf');
+    expect(name('con')).toBe('con_.pdf');
+    expect(name('NUL.pdf')).toBe('NUL_.pdf');
+    expect(name('console')).toBe('console.pdf');
   });
 
   it('limits very long names', () => {
-    const result = sanitizeOutputName('x'.repeat(500));
+    const result = name('x'.repeat(500));
     expect(result.endsWith('.pdf')).toBe(true);
     expect(result.length).toBeLessThanOrEqual(124);
   });
 
   it('keeps unicode names', () => {
-    expect(sanitizeOutputName('Résumé 履歴書')).toBe('Résumé 履歴書.pdf');
+    expect(name('Résumé 履歴書')).toBe('Résumé 履歴書.pdf');
   });
+});
 
-  it('honors a custom fallback', () => {
-    expect(sanitizeOutputName('', 'out.pdf')).toBe('out.pdf');
+describe('extensionFor', () => {
+  it('maps the MIME types the tools produce', () => {
+    expect(extensionFor('application/pdf')).toBe('pdf');
+    expect(extensionFor('application/zip')).toBe('zip');
+    expect(extensionFor('image/jpeg')).toBe('jpg');
+    expect(extensionFor('image/png')).toBe('png');
   });
 });

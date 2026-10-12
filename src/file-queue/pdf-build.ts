@@ -62,7 +62,7 @@ export async function buildPdf<Input extends { name: string }>(
   const bytes = await doc.save();
   onProgress?.({ fraction: 1, label: 'Saving the PDF…' });
 
-  return { bytes, pageCount: doc.getPageCount(), pagesPerFile };
+  return { bytes, type: 'application/pdf', pageCount: doc.getPageCount(), pagesPerFile };
 }
 
 function toJobError(

@@ -13,6 +13,8 @@ export interface JobProgress {
 
 export interface JobResult {
   bytes: Uint8Array;
+  /** MIME type of `bytes`, which also decides the download's file extension. */
+  type: string;
   pageCount: number;
 }
 
