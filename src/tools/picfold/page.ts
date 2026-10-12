@@ -1,4 +1,5 @@
 import { picfoldLogo } from '../../components/logo';
+import { selectField } from '../../components/select-field';
 import { startJob } from '../../file-queue/job';
 import { mountFileQueue } from '../../file-queue/view';
 import { createElement } from '../../lib/dom';
@@ -11,38 +12,14 @@ import { KIND_LABELS } from './image-file';
 import { inspectImage, type ImageInfo } from './inspect';
 import type { Margin, PageSize } from './layout';
 
-function select<Value extends string>(
-  id: string,
-  label: string,
-  choices: Record<Value, string>,
-  initial: Value,
-): { field: HTMLElement; value: () => Value } {
-  const control = createElement(
-    'select',
-    { id, class: 'input' },
-    ...Object.entries<string>(choices).map(([value, text]) =>
-      createElement('option', { value, selected: value === initial }, text),
-    ),
-  );
-  return {
-    field: createElement(
-      'div',
-      { class: 'field' },
-      createElement('label', { for: id, class: 'field__label' }, label),
-      control,
-    ),
-    value: () => control.value as Value,
-  };
-}
-
 export function mount({ container }: ToolContext): Unmount {
-  const pageSize = select<PageSize>(
+  const pageSize = selectField<PageSize>(
     'page-size',
     'Page size',
     { fit: 'Same as image', a4: 'A4', letter: 'US Letter' },
     'fit',
   );
-  const margin = select<Margin>(
+  const margin = selectField<Margin>(
     'page-margin',
     'Margin',
     { none: 'None', small: 'Small', large: 'Large' },
