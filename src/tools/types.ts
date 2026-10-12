@@ -1,3 +1,4 @@
+import type { FaqItem } from '../content';
 import type { IconName } from '../lib/icons';
 
 /**
@@ -32,12 +33,17 @@ export interface ToolDefinition {
   name: string;
   /** Short marketing line shown under the name. */
   tagline: string;
-  /** Optional <title> for the tool's page; defaults to "<name> | <site short name>". */
+  /**
+   * <title> for the tool's page; defaults to "<name> | <site short name>". Lead with what people
+   * search for ("Merge PDF Files"), not the brand: search results weight the start of the title.
+   */
   seoTitle?: string;
   /** One-paragraph description used on the home page card and in SEO meta tags. */
   description: string;
-  /** SEO keywords for this tool's page. */
-  keywords: string[];
+  /** Step-by-step instructions shown on the tool's page, e.g. "How to merge PDF files". */
+  guide?: { title: string; steps: string[] };
+  /** Questions specific to this tool, shown above the site-wide FAQ. */
+  faq?: FaqItem[];
   icon: IconName;
   /** `soon` tools render a disabled "Coming soon" card and have no page. */
   status: 'live' | 'soon';

@@ -1,4 +1,5 @@
 import { siteConfig } from './config';
+import { faqItems, type FaqItem } from './content';
 import type { ToolDefinition } from './tools/types';
 
 /**
@@ -10,19 +11,20 @@ import type { ToolDefinition } from './tools/types';
 export interface PageMeta {
   title: string;
   description: string;
-  keywords: string[];
   /** Path relative to the site root, e.g. "" for home or "pdfold/". */
   path: string;
   /** Tool this page belongs to, if any. */
   tool?: ToolDefinition;
+  /** The questions the page shows, mirrored in its structured data. */
+  faq?: readonly FaqItem[];
 }
 
 export function homeMeta(): PageMeta {
   return {
-    title: `${siteConfig.name}: Free, private tools that run in your browser`,
+    title: `Free PDF, Image and QR Tools, No Upload | ${siteConfig.shortName}`,
     description: siteConfig.description,
-    keywords: [...siteConfig.keywords],
     path: '',
+    faq: faqItems,
   };
 }
 
@@ -30,9 +32,9 @@ export function toolMeta(tool: ToolDefinition): PageMeta {
   return {
     title: tool.seoTitle ?? `${tool.name} | ${siteConfig.shortName}`,
     description: tool.description,
-    keywords: [...tool.keywords, ...siteConfig.keywords],
     path: `${tool.slug}/`,
     tool,
+    faq: [...(tool.faq ?? []), ...faqItems],
   };
 }
 
@@ -40,7 +42,6 @@ export function notFoundMeta(): PageMeta {
   return {
     title: `Page not found | ${siteConfig.shortName}`,
     description: siteConfig.description,
-    keywords: [],
     path: '',
   };
 }
@@ -67,31 +68,12 @@ export function renderSeoTags(meta: PageMeta, siteUrl: string): string {
   const image = absoluteUrl(siteUrl, 'og-image.png');
   const e = escapeHtml;
 
-  const jsonLd = meta.tool
-    ? {
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        name: meta.tool.name,
-        description: meta.description,
-        url,
-        applicationCategory: 'UtilitiesApplication',
-        operatingSystem: 'Any (web browser)',
-        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        isAccessibleForFree: true,
-      }
-    : {
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        name: siteConfig.name,
-        description: siteConfig.description,
-        url,
-      };
+  const jsonLd = structuredData(meta, url, absoluteUrl(siteUrl, ''));
 
   return [
     SEO_START,
     `<title>${e(meta.title)}</title>`,
     `<meta name="description" content="${e(meta.description)}" />`,
-    `<meta name="keywords" content="${e(meta.keywords.join(', '))}" />`,
     `<link rel="canonical" href="${e(url)}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:site_name" content="${e(siteConfig.name)}" />`,
@@ -110,4 +92,52 @@ export function renderSeoTags(meta: PageMeta, siteUrl: string): string {
     `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`,
     SEO_END,
   ].join('\n    ');
+}
+
+/**
+ * schema.org data for a page: the web app with its price and breadcrumb for tool pages, the site
+ * for the home page, and the page's visible FAQ. It must match what the page shows.
+ */
+function structuredData(meta: PageMeta, url: string, homeUrl: string): object {
+  const graph: object[] = [];
+  if (meta.tool) {
+    graph.push(
+      {
+        '@type': 'WebApplication',
+        name: meta.tool.name,
+        description: meta.description,
+        url,
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: siteConfig.shortName, item: homeUrl },
+          { '@type': 'ListItem', position: 2, name: meta.tool.name, item: url },
+        ],
+      },
+    );
+  } else {
+    graph.push({
+      '@type': 'WebSite',
+      name: siteConfig.name,
+      description: siteConfig.description,
+      url,
+    });
+  }
+  if (meta.faq?.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: meta.faq.map(({ question, answer }) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: { '@type': 'Answer', text: answer },
+      })),
+    });
+  }
+  return { '@context': 'https://schema.org', '@graph': graph };
 }

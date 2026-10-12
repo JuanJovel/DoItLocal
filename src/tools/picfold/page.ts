@@ -4,6 +4,7 @@ import { mountFileQueue } from '../../file-queue/view';
 import { createElement } from '../../lib/dom';
 import { formatBytes } from '../../lib/format';
 import type { ToolContext, Unmount } from '../types';
+import { picfold } from './index';
 import type { ConvertRequest } from './convert';
 import { renderThumbnail } from './decode';
 import { KIND_LABELS } from './image-file';
@@ -50,14 +51,14 @@ export function mount({ container }: ToolContext): Unmount {
 
   return mountFileQueue<ImageInfo>(container, {
     page: {
-      name: 'PicFold',
+      tool: picfold,
       logo: picfoldLogo(18),
       title: [
-        'Photos to PDF. ',
+        'JPG to PDF. ',
         createElement('span', { class: 'hero__accent' }, 'Free. Private.'),
         ' Nothing leaves your device.',
       ],
-      lede: 'Turn photos, scans and screenshots into one PDF, without uploading a thing.',
+      lede: 'Turn photos, scans, screenshots and other images into one PDF, without uploading a thing.',
       workspaceLabel: 'Image to PDF converter',
     },
     accept: 'image/*,.heic,.heif,.avif',
