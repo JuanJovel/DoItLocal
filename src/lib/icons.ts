@@ -19,6 +19,8 @@ const PATHS = {
   'arrow-right': '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
   image:
     '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 15-4.5-4.5L6 20"/>',
+  'file-image':
+    '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><circle cx="10" cy="12" r="1.5"/><path d="m19 17-3.5-3.5L8 21"/>',
   file: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
   alert: '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4"/><path d="M12 17.2v.01"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
