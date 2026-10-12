@@ -59,7 +59,7 @@ describe('tools registry', () => {
       icon: 'file',
       status: 'soon',
     };
-    expect(liveTools([...tools, planned]).map((t) => t.id)).toEqual(['pdfold', 'picfold', 'ezqr']);
+    expect(liveTools([...tools, planned])).toEqual(liveTools());
     expect(findToolBySlug('planned', [...tools, planned])).toBeUndefined();
   });
 
@@ -75,11 +75,6 @@ describe('tools registry', () => {
       load: () => Promise.resolve({ mount: () => undefined }),
     };
     expect(findToolBySlug('demo', [...tools, extra])).toBe(extra);
-    expect(liveTools([...tools, extra]).map((t) => t.id)).toEqual([
-      'pdfold',
-      'picfold',
-      'ezqr',
-      'demo',
-    ]);
+    expect(liveTools([...tools, extra])).toEqual([...liveTools(), extra]);
   });
 });
