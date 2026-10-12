@@ -108,10 +108,12 @@ describe('mergePdfs', () => {
     expect(fractions).toEqual([...fractions].sort((x, y) => x - y));
     expect(fractions[0]).toBe(0);
     expect(fractions.at(-1)).toBe(1);
-    expect(events.filter((e) => e.stage === 'reading').map((e) => e.name)).toEqual([
-      '1.pdf',
-      '2.pdf',
-      '3.pdf',
+    expect(events.map((e) => e.label)).toEqual([
+      'Adding file 1 of 3: 1.pdf',
+      'Adding file 2 of 3: 2.pdf',
+      'Adding file 3 of 3: 3.pdf',
+      'Saving the PDF…',
+      'Saving the PDF…',
     ]);
   });
 
@@ -153,9 +155,7 @@ describe('mergePdfs', () => {
     const controller = new AbortController();
     const error = await mergePdfs([asInput('1.pdf', bytes), asInput('2.pdf', bytes)], {
       signal: controller.signal,
-      onProgress: (p) => {
-        if (p.index === 0) controller.abort();
-      },
+      onProgress: () => controller.abort(),
     }).catch((e: unknown) => e);
     expect(error).toMatchObject({ code: 'cancelled' });
   });

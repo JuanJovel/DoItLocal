@@ -81,8 +81,8 @@ describe('imagesToPdf', () => {
       fit,
       { onProgress: (p) => events.push(p) },
     );
-    const reading = events.filter((e) => e.stage === 'reading').map((e) => e.name);
-    expect(reading).toEqual(['1.png', '2.png']);
+    expect(events[0]?.label).toBe('Adding file 1 of 2: 1.png');
+    expect(events[1]?.label).toBe('Adding file 2 of 2: 2.png');
     expect(events.at(-1)?.fraction).toBe(1);
   });
 });

@@ -388,12 +388,9 @@ export function mountFileQueue<Info>(
     }
   }
 
-  function showProgress(p: JobProgress): void {
-    progressBar.value = p.fraction;
-    progressLabel.textContent =
-      p.stage === 'saving'
-        ? 'Saving the PDF…'
-        : `${verb.ing} file ${p.index + 1} of ${p.total}: ${p.name}`;
+  function showProgress({ fraction, label }: JobProgress): void {
+    progressBar.value = fraction;
+    progressLabel.textContent = label;
   }
 
   function discardOutcome(): void {

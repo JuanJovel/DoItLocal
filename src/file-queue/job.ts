@@ -1,17 +1,14 @@
 /**
- * Running a build (merge, convert) off the main thread. The page calls `startJob` with a
- * worker; the worker module calls `serveJobs`. This module never imports pdf-lib, so the
- * page can use it without pulling the PDF library into its bundle.
+ * Running a build (merge, convert): `startJob` runs one in a Web Worker, which calls
+ * `serveJobs`; `startTask` runs one on the main thread. This module never imports pdf-lib,
+ * so the page can use it without pulling the PDF library into its bundle.
  */
 
 export interface JobProgress {
-  stage: 'reading' | 'saving';
-  /** 0-based index of the file being processed (the last index while saving). */
-  index: number;
-  total: number;
-  name: string;
   /** Overall progress from 0 to 1. */
   fraction: number;
+  /** What is happening, e.g. "Merging file 2 of 5: report.pdf". */
+  label: string;
 }
 
 export interface JobResult {
@@ -71,8 +68,7 @@ export function startJob<Request>({
     worker = createWorker();
   } catch {
     // Slower, and may briefly block the UI, but still works.
-    const controller = new AbortController();
-    return { result: fallback(controller.signal), cancel: () => controller.abort() };
+    return startTask(fallback);
   }
 
   let fail: (error: JobError) => void = () => undefined;
@@ -100,6 +96,17 @@ export function startJob<Request>({
 
   worker.postMessage(request);
   return { result, cancel: () => fail(new JobError('cancelled', 'Cancelled.')) };
+}
+
+/** Run a job on the main thread, for work that needs the page (pdf.js rendering to a canvas). */
+export function startTask(run: (signal: AbortSignal) => Promise<JobResult>): Job {
+  const controller = new AbortController();
+  return { result: run(controller.signal), cancel: () => controller.abort() };
+}
+
+/** Throw the "cancelled" JobError once `signal` is aborted; call it between units of work. */
+export function throwIfAborted(signal: AbortSignal | undefined): void {
+  if (signal?.aborted) throw new JobError('cancelled', 'Cancelled.');
 }
 
 /** Worker side: run `job` for each request and report progress, the result or the error. */
