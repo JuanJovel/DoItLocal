@@ -377,19 +377,19 @@
   color: var(--accent-text);
 }
 
-.privacy-steps {
+.steps {
   display: grid;
   gap: var(--space-4);
   counter-reset: step;
 }
 
-.privacy-steps li {
+.steps li {
   position: relative;
   padding-left: 2.5rem;
   counter-increment: step;
 }
 
-.privacy-steps li::before {
+.steps li::before {
   content: counter(step);
   position: absolute;
   left: 0;
@@ -405,7 +405,7 @@
   font-weight: 700;
 }
 
-.privacy-steps strong {
+.steps strong {
   display: block;
   color: var(--text);
 }

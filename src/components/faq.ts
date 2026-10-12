@@ -1,4 +1,4 @@
-import { faqItems, privacyPoints } from '../content';
+import { faqItems, privacyPoints, type FaqItem } from '../content';
 import { createElement } from '../lib/dom';
 import { icon } from '../lib/icons';
 
@@ -22,7 +22,7 @@ export function privacyDetails(): HTMLElement {
     [
       createElement(
         'ol',
-        { class: 'privacy-steps' },
+        { class: 'steps' },
         ...privacyPoints.map((point) =>
           createElement(
             'li',
@@ -37,7 +37,7 @@ export function privacyDetails(): HTMLElement {
   );
 }
 
-export function faqSection(): HTMLElement {
+export function faqSection(items: readonly FaqItem[] = faqItems): HTMLElement {
   return createElement(
     'section',
     { class: 'section', id: 'faq', 'aria-labelledby': 'faq-title' },
@@ -52,7 +52,7 @@ export function faqSection(): HTMLElement {
       createElement(
         'div',
         { class: 'faq' },
-        ...faqItems.map((item) =>
+        ...items.map((item) =>
           disclosure(
             item.question,
             item.answer.split('\n\n').map((paragraph) => createElement('p', null, paragraph)),

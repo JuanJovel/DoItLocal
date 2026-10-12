@@ -7,6 +7,7 @@ import { downloadBlob } from '../../lib/download';
 import { createElement, parseSvg } from '../../lib/dom';
 import { icon } from '../../lib/icons';
 import type { ToolContext } from '../types';
+import { ezqr } from './index';
 import {
   colorWarning,
   createQr,
@@ -134,11 +135,11 @@ export function mount({ container }: ToolContext): undefined {
 
   container.replaceChildren(
     toolPage({
-      name: 'EzQR',
+      tool: ezqr,
       logo: ezqrLogo(18),
       title: [
-        'Make QR codes. ',
-        createElement('span', { class: 'hero__accent' }, 'Free. No watermarks.'),
+        'Free QR code generator. ',
+        createElement('span', { class: 'hero__accent' }, 'No watermarks. No sign-up.'),
       ],
       lede: 'Type a link or some text and download a sharp PNG or SVG. Nothing is uploaded.',
       workspace: createElement('div', { class: 'container qr-layout' }, controls, output),

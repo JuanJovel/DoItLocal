@@ -27,8 +27,14 @@ describe('tools registry', () => {
     }
   });
 
-  it('requires SEO keywords for live tools', () => {
-    for (const tool of liveTools()) expect(tool.keywords.length, tool.id).toBeGreaterThan(0);
+  it('gives every live tool a search-friendly title, a guide and its own FAQ', () => {
+    for (const tool of liveTools()) {
+      // Search results cut titles at about 60 characters, and the brand goes last.
+      expect(tool.seoTitle?.length, tool.id).toBeLessThanOrEqual(60);
+      expect(tool.seoTitle?.endsWith(`| ${tool.name}`), tool.id).toBe(true);
+      expect(tool.guide?.steps.length, tool.id).toBeGreaterThanOrEqual(2);
+      expect(tool.faq?.length, tool.id).toBeGreaterThan(0);
+    }
   });
 
   it('lists PDFold, PicFold, then EzQR', () => {
@@ -50,7 +56,6 @@ describe('tools registry', () => {
       name: 'Planned',
       tagline: 'Not built yet.',
       description: 'A tool that is announced but has no page yet.',
-      keywords: [],
       icon: 'file',
       status: 'soon',
     };
@@ -65,7 +70,6 @@ describe('tools registry', () => {
       name: 'Demo',
       tagline: 'A demo.',
       description: 'A demo tool used in a test.',
-      keywords: ['demo'],
       icon: 'file',
       status: 'live',
       load: () => Promise.resolve({ mount: () => undefined }),
