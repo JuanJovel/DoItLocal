@@ -44,6 +44,8 @@ export interface FileQueueConfig<Info> {
   pageCount: (info: Info) => number;
   /** Detail line on a ready file's card, e.g. "3 pages · 1.2 MB". */
   describe: (info: Info, item: QueueItem<Info>) => string;
+  /** What the action makes from this many pages; defaults to "one PDF of N pages". */
+  describeOutput?: (pages: number) => string;
   /** Starts building the PDF from the ready files, in order. */
   start: (items: QueueItem<Info>[], onProgress: (progress: JobProgress) => void) => Job;
   /** Extra settings shown next to the file name. Changing one discards a finished result. */
@@ -75,6 +77,9 @@ export function mountFileQueue<Info>(
   let job: Job | null = null;
   let outcome: Outcome | null = null;
   let pendingFocus: { id: string; action: CardAction } | null = null;
+
+  const describeOutput =
+    config.describeOutput ?? ((pages: number) => `one PDF of ${plural(pages, 'page')}`);
 
   // ---------------------------------------------------------------- markup
   const fileInput = createElement('input', {
@@ -268,7 +273,9 @@ export function mountFileQueue<Info>(
     };
     summary.textContent = queueSummary(state);
     actionBtn.disabled = ready.length < config.minFiles || state.checking || isBusy();
-    hint.textContent = isBusy() ? '' : actionHint(state, { ...config, verb: verb.base });
+    hint.textContent = isBusy()
+      ? ''
+      : actionHint(state, { ...config, verb: verb.base, output: describeOutput });
 
     // A finished result goes stale when the queue changes.
     if (outcome && outcome.signature !== signature()) discardOutcome();
@@ -494,7 +501,10 @@ export function mountFileQueue<Info>(
   nameInput.addEventListener('blur', () => {
     nameInput.value = sanitizeOutputName(nameInput.value, config.defaultFileName);
   });
-  config.options?.addEventListener('change', discardOutcome);
+  config.options?.addEventListener('change', () => {
+    discardOutcome();
+    render();
+  });
   cancelBtn.addEventListener('click', () => job?.cancel());
 
   // ------------------------------------------------------------------ boot
