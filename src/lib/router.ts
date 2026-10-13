@@ -40,10 +40,15 @@ export interface RouterOptions {
   base: string;
   /** Renders a route and returns the page's cleanup, if it has one. */
   render: (route: Route) => Promise<Unmount | undefined>;
+  /**
+   * True once a newer version of the site has taken over this open page. Navigation then loads
+   * pages from the server instead of rendering them here, so the page catches up with the update.
+   */
+  isOutdated?: () => boolean;
 }
 
 /** Minimal History-API router: handles clicks on internal links and the back/forward buttons. */
-export function startRouter({ base, render }: RouterOptions): void {
+export function startRouter({ base, render, isOutdated }: RouterOptions): void {
   let unmountCurrent: Unmount | undefined;
   let navigationId = 0;
 
@@ -61,13 +66,16 @@ export function startRouter({ base, render }: RouterOptions): void {
 
   document.addEventListener('click', (event) => {
     const link = internalLinkFor(event, base);
-    if (!link) return;
+    if (!link || isOutdated?.()) return; // an outdated page lets the browser load the link
     event.preventDefault();
     const url = new URL(link.href);
     history.pushState({}, '', url.pathname + url.search + url.hash);
     void renderCurrentRoute();
   });
-  window.addEventListener('popstate', () => void renderCurrentRoute());
+  window.addEventListener('popstate', () => {
+    if (isOutdated?.()) location.reload();
+    else void renderCurrentRoute();
+  });
 
   void renderCurrentRoute();
 }

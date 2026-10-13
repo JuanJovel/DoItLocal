@@ -61,13 +61,33 @@ function focusHeading(main: HTMLElement): void {
   announce(`${heading?.textContent?.trim() || siteConfig.shortName}: page loaded.`);
 }
 
+/** Set when a newer version of the site takes over this open page (see public/sw.js). */
+let siteUpdated = false;
+
 function registerServiceWorker(): void {
   if (!import.meta.env.PROD || !('serviceWorker' in navigator)) return;
+  const { serviceWorker } = navigator;
+
+  // The first install also takes control of the page; only a later change means a new version.
+  let controlled = serviceWorker.controller !== null;
+  serviceWorker.addEventListener('controllerchange', () => {
+    if (controlled) siteUpdated = true;
+    controlled = true;
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch((error: unknown) => {
-      // Offline support is an enhancement; the site works without it.
-      console.warn('Service worker registration failed', error);
-    });
+    serviceWorker
+      .register(`${base}sw.js`, { scope: base })
+      .then((registration) => {
+        // Phones resume a backgrounded tab without reloading it, so check for a new version then.
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') registration.update().catch(() => undefined);
+        });
+      })
+      .catch((error: unknown) => {
+        // Offline support is an enhancement; the site works without it.
+        console.warn('Service worker registration failed', error);
+      });
   });
 }
 
@@ -89,6 +109,7 @@ function boot(): void {
   let firstRender = true;
   startRouter({
     base,
+    isOutdated: () => siteUpdated,
     async render(route) {
       applyMeta(metaFor(route));
       let unmount: Unmount | undefined;
