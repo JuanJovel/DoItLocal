@@ -11,7 +11,7 @@ import { runWhenIdle } from '../lib/prefetch';
 import type { Unmount } from '../tools/types';
 import { enableDropAnywhere } from './drop-anywhere';
 import { createCard, type Card, type CardAction } from './file-card';
-import { sanitizeOutputName } from './filename';
+import { extensionFor, sanitizeOutputName } from './filename';
 import { createIntake, describeIntake, type Inspection } from './intake';
 import { JobError, type Job, type JobProgress } from './job';
 import { actionHint, queueSummary } from './status-text';
@@ -44,6 +44,8 @@ export interface FileQueueConfig<Info> {
   pageCount: (info: Info) => number;
   /** Detail line on a ready file's card, e.g. "3 pages · 1.2 MB". */
   describe: (info: Info, item: QueueItem<Info>) => string;
+  /** What the action makes from this many pages; defaults to "one PDF of N pages". */
+  describeOutput?: (pages: number) => string;
   /** Starts building the PDF from the ready files, in order. */
   start: (items: QueueItem<Info>[], onProgress: (progress: JobProgress) => void) => Job;
   /** Extra settings shown next to the file name. Changing one discards a finished result. */
@@ -75,6 +77,9 @@ export function mountFileQueue<Info>(
   let job: Job | null = null;
   let outcome: Outcome | null = null;
   let pendingFocus: { id: string; action: CardAction } | null = null;
+
+  const describeOutput =
+    config.describeOutput ?? ((pages: number) => `one PDF of ${plural(pages, 'page')}`);
 
   // ---------------------------------------------------------------- markup
   const fileInput = createElement('input', {
@@ -268,7 +273,9 @@ export function mountFileQueue<Info>(
     };
     summary.textContent = queueSummary(state);
     actionBtn.disabled = ready.length < config.minFiles || state.checking || isBusy();
-    hint.textContent = isBusy() ? '' : actionHint(state, { ...config, verb: verb.base });
+    hint.textContent = isBusy()
+      ? ''
+      : actionHint(state, { ...config, verb: verb.base, output: describeOutput });
 
     // A finished result goes stale when the queue changes.
     if (outcome && outcome.signature !== signature()) discardOutcome();
@@ -388,12 +395,9 @@ export function mountFileQueue<Info>(
     }
   }
 
-  function showProgress(p: JobProgress): void {
-    progressBar.value = p.fraction;
-    progressLabel.textContent =
-      p.stage === 'saving'
-        ? 'Saving the PDF…'
-        : `${verb.ing} file ${p.index + 1} of ${p.total}: ${p.name}`;
+  function showProgress({ fraction, label }: JobProgress): void {
+    progressBar.value = fraction;
+    progressLabel.textContent = label;
   }
 
   function discardOutcome(): void {
@@ -411,8 +415,7 @@ export function mountFileQueue<Info>(
 
   async function run(): Promise<void> {
     if (isBusy() || actionBtn.disabled) return;
-    const fileName = sanitizeOutputName(nameInput.value, config.defaultFileName);
-    nameInput.value = fileName;
+    nameInput.value = sanitizeOutputName(nameInput.value, config.defaultFileName);
 
     const inputs = queue.ready;
     const snapshot = signature();
@@ -425,7 +428,12 @@ export function mountFileQueue<Info>(
 
     try {
       const result = await job.result;
-      const blob = new Blob([result.bytes as BlobPart], { type: 'application/pdf' });
+      const blob = new Blob([result.bytes as BlobPart], { type: result.type });
+      const fileName = sanitizeOutputName(
+        nameInput.value,
+        config.defaultFileName,
+        extensionFor(result.type),
+      );
       const url = URL.createObjectURL(blob);
       const details = `${plural(result.pageCount, 'page')} · ${formatBytes(blob.size)}`;
       outcome = { url, signature: snapshot };
@@ -493,7 +501,10 @@ export function mountFileQueue<Info>(
   nameInput.addEventListener('blur', () => {
     nameInput.value = sanitizeOutputName(nameInput.value, config.defaultFileName);
   });
-  config.options?.addEventListener('change', discardOutcome);
+  config.options?.addEventListener('change', () => {
+    discardOutcome();
+    render();
+  });
   cancelBtn.addEventListener('click', () => job?.cancel());
 
   // ------------------------------------------------------------------ boot

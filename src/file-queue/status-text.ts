@@ -31,10 +31,15 @@ export interface HintOptions {
   noun: string;
   /** What the action does to them: "merge" or "convert". */
   verb: string;
+  /** What the action produces from this many pages, e.g. "one PDF of 6 pages". */
+  output: (pages: number) => string;
 }
 
 /** The helper line under the action button. */
-export function actionHint(state: QueueState, { minFiles, noun, verb }: HintOptions): string {
+export function actionHint(
+  state: QueueState,
+  { minFiles, noun, verb, output }: HintOptions,
+): string {
   if (state.checking) return 'Reading your files…';
   if (state.files < minFiles) {
     const missing = minFiles - state.files;
@@ -45,5 +50,5 @@ export function actionHint(state: QueueState, { minFiles, noun, verb }: HintOpti
   if (state.bytes > LARGE_TOTAL_BYTES) {
     return `That's ${formatBytes(state.bytes)} in total. If your browser runs out of memory, work in smaller batches.`;
   }
-  return `Ready: ${plural(state.files, noun)} into one PDF of ${plural(state.pages, 'page')}.`;
+  return `Ready: ${plural(state.files, noun)} into ${output(state.pages)}.`;
 }

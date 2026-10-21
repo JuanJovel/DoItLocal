@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib';
 import { commonProblems } from './intake';
-import { JobError, type FailedFile, type JobProgress, type JobResult } from './job';
+import { JobError, throwIfAborted, type FailedFile, type JobProgress, type JobResult } from './job';
 import type { FileProblem } from './store';
 
 /**
@@ -45,11 +45,8 @@ export async function buildPdf<Input extends { name: string }>(
   for (const [index, input] of inputs.entries()) {
     throwIfAborted(signal);
     onProgress?.({
-      stage: 'reading',
-      index,
-      total,
-      name: input.name,
       fraction: (index / total) * (1 - SAVE_SHARE),
+      label: `Adding file ${index + 1} of ${total}: ${input.name}`,
     });
     try {
       pagesPerFile.push(await add(doc, input));
@@ -59,17 +56,13 @@ export async function buildPdf<Input extends { name: string }>(
   }
 
   throwIfAborted(signal);
-  onProgress?.({ stage: 'saving', index: total - 1, total, name: '', fraction: 1 - SAVE_SHARE });
+  onProgress?.({ fraction: 1 - SAVE_SHARE, label: 'Saving the PDF…' });
   doc.setProducer(producer);
   doc.setCreator(producer);
   const bytes = await doc.save();
-  onProgress?.({ stage: 'saving', index: total - 1, total, name: '', fraction: 1 });
+  onProgress?.({ fraction: 1, label: 'Saving the PDF…' });
 
-  return { bytes, pageCount: doc.getPageCount(), pagesPerFile };
-}
-
-function throwIfAborted(signal: AbortSignal | undefined): void {
-  if (signal?.aborted) throw new JobError('cancelled', 'Cancelled.');
+  return { bytes, type: 'application/pdf', pageCount: doc.getPageCount(), pagesPerFile };
 }
 
 function toJobError(

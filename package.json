@@ -1,7 +1,7 @@
 {
   "name": "doitlocal-toolkit",
   "version": "1.0.0",
-  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser: PDFold, PicFold and EzQR.",
+  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser: PDFold, PicFold, SnapPages and EzQR.",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test"
   },
   "dependencies": {
+    "fflate": "^0.8.3",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.3.289",
     "qrcode-generator": "^2.0.4",

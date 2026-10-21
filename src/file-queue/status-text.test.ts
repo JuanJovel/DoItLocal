@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { actionHint, LARGE_TOTAL_BYTES, queueSummary } from './status-text';
 
 const base = { files: 3, pages: 6, bytes: 2048, problems: 0, checking: false };
-const merge = { minFiles: 2, noun: 'PDF', verb: 'merge' };
-const convert = { minFiles: 1, noun: 'image', verb: 'convert' };
+const onePdf = (pages: number): string => `one PDF of ${pages} pages`;
+const merge = { minFiles: 2, noun: 'PDF', verb: 'merge', output: onePdf };
+const convert = { minFiles: 1, noun: 'image', verb: 'convert', output: onePdf };
 
 describe('queueSummary', () => {
   it('summarizes files, pages and size', () => {
@@ -35,7 +36,9 @@ describe('actionHint', () => {
     );
   });
 
-  it('confirms when ready', () => {
+  it('confirms when ready, in the words of what the tool makes', () => {
     expect(actionHint(base, merge)).toBe('Ready: 3 PDFs into one PDF of 6 pages.');
+    const images = { ...merge, minFiles: 1, output: (pages: number) => `${pages} JPG images` };
+    expect(actionHint(base, images)).toBe('Ready: 3 PDFs into 6 JPG images.');
   });
 });

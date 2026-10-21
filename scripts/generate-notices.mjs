@@ -47,8 +47,9 @@ Development-only tools (Vite, TypeScript, Vitest, ESLint, Prettier and so on) ar
 | Component | Version | License | Used for |
 | --- | --- | --- | --- |
 | [pdf-lib](https://github.com/Hopding/pdf-lib) | ${version('pdf-lib')} | MIT | Merging PDFs and building PDFs from images (bundles @pdf-lib/standard-fonts, @pdf-lib/upng and pako) |
-| [PDF.js](https://github.com/mozilla/pdf.js) (pdfjs-dist) | ${version('pdfjs-dist')} | Apache-2.0 | Page counts and thumbnails |
+| [PDF.js](https://github.com/mozilla/pdf.js) (pdfjs-dist) | ${version('pdfjs-dist')} | Apache-2.0 | Reading PDFs: page counts, thumbnails and page images |
 | [SortableJS](https://github.com/SortableJS/Sortable) | ${version('sortablejs')} | MIT | Drag-and-drop reordering |
+| [fflate](https://github.com/101arrowz/fflate) | ${version('fflate')} | MIT | Packing page images into a ZIP (SnapPages) |
 | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) | ${version('qrcode-generator')} | MIT | Encoding QR codes (EzQR) |
 
 ---
@@ -82,6 +83,12 @@ ${fence(read('node_modules/pdfjs-dist/LICENSE'))}
 ## SortableJS (MIT)
 
 ${fence(read('node_modules/sortablejs/LICENSE'))}
+
+---
+
+## fflate (MIT)
+
+${fence(read('node_modules/fflate/LICENSE'))}
 
 ---
 

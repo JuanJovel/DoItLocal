@@ -42,6 +42,17 @@ export function picfoldLogo(size = 32): SVGSVGElement {
   );
 }
 
+export function snapPagesLogo(size = 32): SVGSVGElement {
+  return logo(
+    size,
+    9,
+    `<path d="M8 7.5h7.5l3.5 3.5v13a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 24V9A1.5 1.5 0 0 1 8 7.5Z" fill="var(--accent-contrast)" opacity=".5"/>` +
+      `<rect x="13" y="12" width="13" height="11" rx="2" fill="var(--accent-contrast)"/>` +
+      `<circle cx="17" cy="15.8" r="1.4" fill="var(--accent)"/>` +
+      `<path d="m14.8 21.2 3.6-3.6 2.2 2.2 1.6-1.6 2.2 3" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  );
+}
+
 export function ezqrLogo(size = 32): SVGSVGElement {
   return logo(
     size,

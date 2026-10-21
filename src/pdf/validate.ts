@@ -1,9 +1,9 @@
-import { commonProblems, readHead, type Inspection } from '../../file-queue/intake';
-import type { FileProblem } from '../../file-queue/store';
-import { inspectPdf } from './pdf-reader';
+import { commonProblems, readHead, type Inspection } from '../file-queue/intake';
+import type { FileProblem } from '../file-queue/store';
+import { inspectPdf } from './reader';
 
 /**
- * PDF validation and friendly error messages.
+ * PDF validation and friendly error messages, shared by the tools that read PDFs.
  *
  * Messages deliberately omit the file name: the UI shows it next to the message
  * (and prefixes it for screen-reader announcements).
@@ -48,8 +48,8 @@ function describeNonPdf(name: string, type: string): string {
   if (['zip', 'rar', '7z', 'gz', 'tar'].includes(ext))
     return 'This is an archive, not a PDF. Extract it first, then add the PDFs inside.';
   if (type.startsWith('text/') || ['txt', 'md', 'csv', 'html', 'htm'].includes(ext))
-    return 'This is a text file, not a PDF. PDFold only merges PDF files.';
-  return "This doesn't look like a PDF. PDFold only merges PDF files.";
+    return 'This is a text file, not a PDF.';
+  return "This doesn't look like a PDF file.";
 }
 
 /**
