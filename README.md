@@ -11,12 +11,13 @@ Small, free web tools that run entirely in your browser. No uploads, no accounts
 - **PicFold** turns photos, scans and screenshots into one PDF. Reorder and rotate them, pick a page size, and download.
 - **SnapPages** turns PDF pages into JPG or PNG images: one image for a one-page PDF, or a ZIP with every page.
 - **EzQR** makes QR codes from a link or text and exports them as PNG or SVG, with no watermark.
+- **ReelBack** reverses a video, sound included, and saves it as an MP4. It runs ffmpeg in the browser with [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm).
 
 Everything is processed on your own device. There is no backend: the site is only static files.
 
 ## Privacy
 
-The Content-Security-Policy only allows requests to the site's own origin and no third-party scripts, fonts or analytics. You can check this yourself: open the Network tab in your browser's dev tools and use a tool, or load the page and go offline.
+The Content-Security-Policy only allows requests to the site's own origin and no third-party scripts, fonts or analytics. ffmpeg.wasm is served from the site itself, not a CDN; the policy's `'wasm-unsafe-eval'` lets it compile WebAssembly while JavaScript `eval()` stays blocked. You can check this yourself: open the Network tab in your browser's dev tools and use a tool, or load the page and go offline.
 
 ## Adding a tool
 

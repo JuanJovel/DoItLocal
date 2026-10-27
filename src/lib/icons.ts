@@ -29,6 +29,8 @@ const PATHS = {
   chevron: '<path d="m6 9 6 6 6-6"/>',
   'wifi-off':
     '<path d="M2 2l20 20"/><path d="M5 12.6a10 10 0 0 1 4.6-2.5"/><path d="M16 10.4a10 10 0 0 1 3 2.2"/><path d="M2 8.8a15 15 0 0 1 4-2.5"/><path d="M10.7 5.1A15 15 0 0 1 22 8.8"/><path d="M8.5 16.4a5 5 0 0 1 7 0"/><path d="M12 20h.01"/>',
+  rewind:
+    '<rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M11.5 9v6l-4-3z"/><path d="M16.5 9v6l-4-3z"/>',
   grip: '<g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g>',
 } satisfies Record<string, string>;
 

@@ -17,6 +17,10 @@ export default defineConfig(({ command, isPreview }) => ({
   worker: {
     format: 'es',
   },
+  // ffmpeg.wasm starts its own worker from a URL next to its code, which pre-bundling would break.
+  optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg'],
+  },
   test: {
     include: ['src/**/*.test.ts', 'build/**/*.test.ts'],
     environment: 'node',

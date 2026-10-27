@@ -11,6 +11,8 @@ Development-only tools (Vite, TypeScript, Vitest, ESLint, Prettier and so on) ar
 | [SortableJS](https://github.com/SortableJS/Sortable) | 1.15.7 | MIT | Drag-and-drop reordering |
 | [fflate](https://github.com/101arrowz/fflate) | 0.8.3 | MIT | Packing page images into a ZIP (SnapPages) |
 | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) | 2.0.4 | MIT | Encoding QR codes (EzQR) |
+| [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) (@ffmpeg/ffmpeg) | 0.12.15 | MIT | Running ffmpeg in a Web Worker (ReelBack) |
+| [ffmpeg.wasm core](https://github.com/ffmpegwasm/ffmpeg.wasm) (@ffmpeg/core: FFmpeg, x264 and other libraries) | 0.12.10 | GPL-2.0-or-later | Reversing videos (ReelBack) |
 
 ---
 
@@ -393,3 +395,48 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+---
+
+## ffmpeg.wasm (MIT)
+
+The package ships no separate license file; the notice below is taken from the project's
+repository.
+
+```text
+MIT License
+
+Copyright (c) 2019 Jerome Wu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## ffmpeg.wasm core (GNU GPL, version 2 or later)
+
+`@ffmpeg/core` 0.12.10 is [FFmpeg](https://ffmpeg.org/) compiled to WebAssembly together
+with libraries such as x264, and is distributed under the GNU General Public License, version 2
+or (at your option) any later version. It is included unmodified, as the separate files
+`ffmpeg-core.js` and `ffmpeg-core.wasm`, and is loaded only by ReelBack.
+
+- License text: <https://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
+- Source code of this exact build, with its build scripts:
+  <https://github.com/ffmpegwasm/ffmpeg.wasm/tree/v0.12.10>
+- FFmpeg's own license notes: <https://ffmpeg.org/legal.html>

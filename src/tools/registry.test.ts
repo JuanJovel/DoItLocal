@@ -37,9 +37,21 @@ describe('tools registry', () => {
     }
   });
 
-  it('lists PDFold, PicFold, SnapPages, then EzQR', () => {
-    expect(tools.map((t) => t.name)).toEqual(['PDFold', 'PicFold', 'SnapPages', 'EzQR']);
-    expect(liveTools().map((t) => t.id)).toEqual(['pdfold', 'picfold', 'snappages', 'ezqr']);
+  it('lists PDFold, PicFold, SnapPages, EzQR, then ReelBack', () => {
+    expect(tools.map((t) => t.name)).toEqual([
+      'PDFold',
+      'PicFold',
+      'SnapPages',
+      'EzQR',
+      'ReelBack',
+    ]);
+    expect(liveTools().map((t) => t.id)).toEqual([
+      'pdfold',
+      'picfold',
+      'snappages',
+      'ezqr',
+      'reelback',
+    ]);
   });
 
   it('finds live tools by slug only', () => {
@@ -47,6 +59,7 @@ describe('tools registry', () => {
     expect(findToolBySlug('picfold')?.name).toBe('PicFold');
     expect(findToolBySlug('snappages')?.name).toBe('SnapPages');
     expect(findToolBySlug('ezqr')?.name).toBe('EzQR');
+    expect(findToolBySlug('reelback')?.name).toBe('ReelBack');
     expect(findToolBySlug('nope')).toBeUndefined();
   });
 

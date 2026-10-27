@@ -1,0 +1,44 @@
+/* ReelBack page styles. The drop zone, action bar and progress come from file-queue.css. */
+
+.rb-clips {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .rb-clips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rb-clip {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  animation: card-in 0.3s var(--ease);
+}
+
+.rb-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #000;
+  border-radius: var(--radius);
+}
+
+.rb-clip__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.rb-clip__meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
