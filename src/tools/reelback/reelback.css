@@ -6,10 +6,39 @@
   margin-top: var(--space-5);
 }
 
-@media (min-width: 720px) {
-  .rb-clips {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+/* The picked video: a small frame and its details. It is never played on the page. */
+.rb-source {
+  grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.rb-thumb {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  color: var(--text-muted);
+  background: #000;
+  border-radius: var(--radius);
+}
+
+.rb-thumb canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.rb-thumb svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.rb-source__text {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
 .rb-clip {

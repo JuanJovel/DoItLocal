@@ -12,6 +12,7 @@ import { formatBytes } from '../../lib/format';
 import { icon } from '../../lib/icons';
 import type { ToolContext, Unmount } from '../types';
 import { reelBack } from './index';
+import { previewVideo } from './preview';
 import {
   AUDIO_LABELS,
   formatDuration,
@@ -61,14 +62,9 @@ export function mount({ container }: ToolContext): Unmount {
     fileInput,
   );
 
-  const sourceVideo = createElement('video', {
-    class: 'rb-video',
-    controls: true,
-    muted: true,
-    playsinline: true,
-    preload: 'metadata',
-    'aria-label': 'Your video',
-  });
+  // The picked video is not played here: a small frame and its details are enough, and a heavy
+  // file would make an inline player stutter or freeze.
+  const sourceThumb = createElement('div', { class: 'rb-thumb' });
   const sourceName = createElement('p', { class: 'rb-clip__name' });
   const sourceMeta = createElement('p', { class: 'rb-clip__meta' });
   const reversedVideo = createElement('video', {
@@ -94,10 +90,10 @@ export function mount({ container }: ToolContext): Unmount {
     'section',
     { class: 'rb-clips', 'aria-label': 'Videos', hidden: true },
     createElement(
-      'figure',
-      { class: 'rb-clip' },
-      sourceVideo,
-      createElement('figcaption', null, sourceName, sourceMeta),
+      'div',
+      { class: 'rb-clip rb-source' },
+      sourceThumb,
+      createElement('div', { class: 'rb-source__text' }, sourceName, sourceMeta),
     ),
     reversedClip,
   );
@@ -181,7 +177,7 @@ export function mount({ container }: ToolContext): Unmount {
 
   // ------------------------------------------------------------------ state
   let file: File | null = null;
-  let sourceUrl: string | null = null;
+  let previewing: AbortController | null = null;
   let outputUrl: string | null = null;
   let job: ReverseJob | null = null;
 
@@ -211,31 +207,38 @@ export function mount({ container }: ToolContext): Unmount {
       return;
     }
     discardOutput();
-    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
     file = next;
-    sourceUrl = URL.createObjectURL(next);
-    sourceVideo.src = sourceUrl;
     sourceName.textContent = next.name;
     sourceMeta.textContent = formatBytes(next.size);
+    sourceThumb.replaceChildren(icon('rewind'));
     clips.hidden = false;
     actionbar.hidden = false;
     page.dataset['state'] = 'filled';
     preloadFfmpeg();
     announce(`${next.name} added. Choose your settings, then reverse it.`);
+    void showDetails(next);
   }
 
-  // Formats the browser can't play (AVI, some MKV) still work; ffmpeg reads them.
-  sourceVideo.addEventListener('loadedmetadata', () => {
-    if (!file) return;
-    const details = [formatDuration(sourceVideo.duration)];
-    if (sourceVideo.videoWidth)
-      details.push(`${sourceVideo.videoWidth}×${sourceVideo.videoHeight}`);
-    details.push(formatBytes(file.size));
+  /** Fill in the length, size and a frame once the browser has read them. */
+  async function showDetails(picked: File): Promise<void> {
+    previewing?.abort();
+    const controller = new AbortController();
+    previewing = controller;
+    const preview = await previewVideo(picked, controller.signal);
+    if (controller.signal.aborted) return;
+
+    // Formats the browser can't read (AVI, some MKV) still work; ffmpeg reads them.
+    const details: string[] = [];
+    if (preview.duration !== null) details.push(formatDuration(preview.duration));
+    if (preview.size) details.push(`${preview.size.width}×${preview.size.height}`);
+    details.push(formatBytes(picked.size));
+    if (!preview.size) details.push('no preview in this browser');
     sourceMeta.textContent = details.join(' · ');
-  });
-  sourceVideo.addEventListener('error', () => {
-    if (file) sourceMeta.textContent = `${formatBytes(file.size)} · no preview in this browser`;
-  });
+    if (preview.thumbnail) {
+      preview.thumbnail.setAttribute('aria-hidden', 'true');
+      sourceThumb.replaceChildren(preview.thumbnail);
+    }
+  }
 
   function setBusy(on: boolean): void {
     dropzone.toggleAttribute('inert', on);
@@ -327,6 +330,6 @@ export function mount({ container }: ToolContext): Unmount {
     stopDrops();
     job?.cancel();
     discardOutput();
-    if (sourceUrl) URL.revokeObjectURL(sourceUrl);
+    previewing?.abort();
   };
 }
