@@ -51,7 +51,7 @@ export const MAX_DURATION_SECONDS = 20 * 60;
 const SEEK_MARGIN_SECONDS = 1;
 /** Raw frames a chunk may hold in memory. Leaves room for the decoder, encoder and output. */
 const FRAME_BUDGET_BYTES = 480 * 1024 * 1024;
-/** Frame rate assumed when sizing chunks; most phone and camera videos are 30 fps or less. */
+/** Frame rate assumed when sizing chunks for a video whose frame rate ffmpeg did not report. */
 const ASSUMED_FPS = 30;
 const MIN_CHUNK_SECONDS = 1;
 const MAX_CHUNK_SECONDS = 30;
@@ -111,10 +111,16 @@ export function outputSize(
   return { width: even((width * limit) / height), height: even(limit) };
 }
 
-/** Seconds of video per chunk, so one chunk's frames fit the memory budget. */
-export function chunkSeconds(size: { width: number; height: number }): number {
+/**
+ * Seconds of video per chunk, so one chunk's frames fit the memory budget. A 60 or 240 fps
+ * video has that many times more frames per second, so its chunks are that much shorter.
+ */
+export function chunkSeconds(
+  size: { width: number; height: number },
+  fps: number | null = null,
+): number {
   // A yuv420p frame takes 1.5 bytes per pixel.
-  const perSecond = size.width * size.height * 1.5 * ASSUMED_FPS;
+  const perSecond = size.width * size.height * 1.5 * (fps ?? ASSUMED_FPS);
   const seconds = Math.floor(FRAME_BUDGET_BYTES / perSecond);
   return Math.min(MAX_CHUNK_SECONDS, Math.max(MIN_CHUNK_SECONDS, seconds));
 }

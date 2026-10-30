@@ -108,7 +108,7 @@ export function reverseVideo(
     }
 
     const size = outputSize(info, options.maxHeight);
-    const chunks = planChunks(info.duration, chunkSeconds(size));
+    const chunks = planChunks(info.duration, chunkSeconds(size, info.fps));
     const withAudio = info.hasAudio && options.audio === 'reverse';
     const videoShare = 1 - JOIN_SHARE - (withAudio ? AUDIO_SHARE : 0);
     let doneSeconds = 0;

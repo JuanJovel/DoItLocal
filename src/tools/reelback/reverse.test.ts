@@ -100,6 +100,19 @@ describe('chunkSeconds', () => {
     expect(sd).toBeGreaterThan(hd);
   });
 
+  it('uses shorter chunks for videos with more frames per second', () => {
+    const hd = { width: 1920, height: 1080 };
+    expect(chunkSeconds(hd, 60)).toBeLessThan(chunkSeconds(hd, 30));
+    expect(chunkSeconds(hd, 240)).toBeLessThan(chunkSeconds(hd, 60));
+    expect(chunkSeconds(hd, 15)).toBeGreaterThan(chunkSeconds(hd, 30));
+  });
+
+  it('assumes 30 fps when the frame rate is unknown', () => {
+    const hd = { width: 1920, height: 1080 };
+    expect(chunkSeconds(hd, null)).toBe(chunkSeconds(hd, 30));
+    expect(chunkSeconds(hd)).toBe(chunkSeconds(hd, 30));
+  });
+
   it('stays between 1 and 30 seconds', () => {
     expect(chunkSeconds({ width: 7680, height: 4320 })).toBe(1);
     expect(chunkSeconds({ width: 160, height: 90 })).toBe(30);
