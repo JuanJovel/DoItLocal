@@ -55,10 +55,13 @@ export function reverseVideo(
   const ffmpeg = new FFmpeg();
   let cancelled = false;
   let log: string[] = [];
+  /** While reading the video: all of ffmpeg's output, untrimmed, since the facts we want come first. */
+  let probe: string[] | null = null;
   /** Receives every log line of the running command, to read its progress from. */
   let onStatus: ((line: string) => void) | null = null;
 
   ffmpeg.on('log', ({ message }) => {
+    probe?.push(message);
     log.push(message);
     if (log.length > 400) log = log.slice(-200);
     onStatus?.(message);
@@ -86,12 +89,14 @@ export function reverseVideo(
     }
 
     onProgress({ fraction: 0, label: 'Reading the video…' });
-    log = [];
+    probe = [];
     // With no output file ffmpeg prints what it found and exits with an error, as intended.
     await ffmpeg.exec(['-hide_banner', '-i', input]);
+    const probed = probe.join('\n');
+    probe = null;
     let info: VideoInfo;
     try {
-      info = parseVideoInfo(log.join('\n'));
+      info = parseVideoInfo(probed);
     } catch (error) {
       throw new JobError(
         'unreadable',
