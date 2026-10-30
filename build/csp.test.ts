@@ -19,10 +19,12 @@ describe('public/_headers', () => {
     const policy = csp('/');
     expect(policy).toContain("default-src 'self'");
     expect(policy).toContain("object-src 'none'");
-    expect(policy).toContain("script-src 'self'");
+    expect(policy).toContain("script-src 'self' 'wasm-unsafe-eval';");
     expect(policy).toContain("worker-src 'self' blob:");
     expect(policy).toContain("img-src 'self' blob: data:");
-    expect(policy).not.toMatch(/unsafe-inline|unsafe-eval|\*\s|https?:/);
+    expect(policy).toContain("media-src 'self' blob:");
+    // 'wasm-unsafe-eval' (for ffmpeg.wasm) compiles WebAssembly only; JavaScript eval stays off.
+    expect(policy).not.toMatch(/unsafe-inline|(?<!wasm-)unsafe-eval|\*\s|https?:/);
   });
 
   it('uses the same policy on every page route', () => {

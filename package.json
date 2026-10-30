@@ -1,7 +1,7 @@
 {
   "name": "doitlocal-toolkit",
   "version": "1.0.0",
-  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser: PDFold, PicFold, SnapPages and EzQR.",
+  "description": "DoItLocal Toolkit: free, privacy-first tools that run 100% in your browser: PDFold, PicFold, SnapPages, EzQR and ReelBack.",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -23,6 +23,8 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "fflate": "^0.8.3",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.3.289",

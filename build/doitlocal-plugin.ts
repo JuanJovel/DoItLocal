@@ -204,6 +204,9 @@ function listFiles(dir: string): string[] {
   });
 }
 
+/** Largest file the service worker downloads on install. */
+const PRECACHE_MAX_BYTES = 5 * 1024 * 1024;
+
 /** Fill the placeholders in sw.js with the real file list and a content-based cache version. */
 function writeServiceWorker(out: string): void {
   const swPath = join(out, 'sw.js');
@@ -213,6 +216,9 @@ function writeServiceWorker(out: string): void {
   const files = listFiles(out)
     .map((f) => relative(out, f).split('\\').join('/'))
     .filter((f) => !skip.has(f) && !f.endsWith('.map'))
+    // Very large files (ffmpeg.wasm) are not downloaded by every visitor up front; sw.js caches
+    // them the first time a tool asks for one.
+    .filter((f) => statSync(join(out, f)).size <= PRECACHE_MAX_BYTES)
     .sort();
 
   const hash = createHash('sha256');

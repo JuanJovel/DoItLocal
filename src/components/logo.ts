@@ -63,3 +63,13 @@ export function ezqrLogo(size = 32): SVGSVGElement {
       `<rect x="18" y="18" width="3.5" height="3.5" rx=".6"/><rect x="22.5" y="22.5" width="2.5" height="2.5" rx=".6"/><rect x="22.5" y="18" width="2.5" height="2.5" rx=".6"/><rect x="18" y="22.5" width="2.5" height="2.5" rx=".6"/></g>`,
   );
 }
+
+export function reelBackLogo(size = 32): SVGSVGElement {
+  return logo(
+    size,
+    9,
+    `<rect x="6" y="8" width="20" height="16" rx="2.5" fill="var(--accent-contrast)"/>` +
+      `<path d="M6 12h20M6 20h20" stroke="var(--accent)" stroke-width="1.2" opacity=".5"/>` +
+      `<path d="M15.5 13v6l-4.2-3zM20.7 13v6l-4.2-3z" fill="var(--accent)" stroke="var(--accent)" stroke-width="1" stroke-linejoin="round"/>`,
+  );
+}

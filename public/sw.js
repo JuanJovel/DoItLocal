@@ -6,6 +6,8 @@
  * loaded tool code works offline. The worker only handles the site's own static files; it
  * never sees the files you process.
  *
+ * Files too large to precache (ffmpeg.wasm, about 30 MB) are cached the first time they are used.
+ *
  * Pages come from the network first, so a new deploy shows up on the next visit; their cached
  * copies are only used offline. Build assets have a content hash in their names and never
  * change, so they come from the cache first.
@@ -52,7 +54,18 @@ self.addEventListener('fetch', (event) => {
 });
 
 async function cacheFirst(request) {
-  return (await caches.match(request)) ?? fetch(request);
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  // Too large to precache (ffmpeg.wasm): keep it once a tool has fetched it, for offline use.
+  if (response.ok) {
+    const copy = response.clone();
+    caches
+      .open(CACHE)
+      .then((cache) => cache.put(request, copy))
+      .catch(() => undefined);
+  }
+  return response;
 }
 
 async function networkFirst(request) {
