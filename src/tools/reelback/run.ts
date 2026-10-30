@@ -157,6 +157,10 @@ export function reverseVideo(
     onProgress({ fraction: 1 - JOIN_SHARE, label: 'Putting it together…' });
     await ffmpeg.writeFile('parts.txt', concatList(parts));
     await exec(joinArgs('parts.txt', audio, 'reversed.mp4'), 'joining the video');
+    // The parts and the sound now live in reversed.mp4. Free them before the result is copied out,
+    // so a long video does not hold three copies of itself in memory at once.
+    const joined = [...parts, 'parts.txt', ...(audio ? [audio] : [])];
+    await Promise.allSettled(joined.map((name) => ffmpeg.deleteFile(name)));
     const bytes = await ffmpeg.readFile('reversed.mp4');
     if (typeof bytes === 'string') throw new JobError('failed', 'ffmpeg returned no video.');
     onProgress({ fraction: 1, label: 'Done' });
