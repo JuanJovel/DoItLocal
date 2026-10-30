@@ -140,7 +140,7 @@ export function mount({ container }: ToolContext): Unmount {
   );
   const actionbar = createElement(
     'section',
-    { class: 'actionbar', 'aria-label': 'Reverse video', hidden: true },
+    { class: 'actionbar rb-actionbar', 'aria-label': 'Reverse video', hidden: true },
     createElement('div', { class: 'actionbar__row' }, settings, actionBtn),
     hint,
     progress,

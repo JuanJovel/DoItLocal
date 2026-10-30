@@ -6,6 +6,12 @@
   margin-top: var(--space-5);
 }
 
+/* The action bar stays in the page here. Stuck to the bottom of the screen, it would float over
+   the reversed video while you scroll. */
+.actionbar.rb-actionbar {
+  position: static;
+}
+
 /* The picked video: a small frame and its details. It is never played on the page. */
 .rb-source {
   grid-template-columns: 9rem minmax(0, 1fr);
